@@ -1,0 +1,65 @@
+server:
+  port: 80
+
+spring:
+  application:
+    name: cloud-consumer-openfeign-order
+  ####Spring Cloud Consul for Service Discovery
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        prefer-ip-address: true #优先使用服务ip进行注册
+        service-name: ${spring.application.name}
+    openfeign:
+      client:
+        config:
+          default:
+            #连接超时时间
+            connectTimeout: 30000
+            #读取超时时间
+            readTimeout: 30000
+          cloud-payment-service: # 可以针对单个服务端进行设置超时时间
+            #连接超时时间
+            connectTimeout: 30000
+            #读取超时时间
+            readTimeout: 30000
+      httpclient:
+        hc5:
+          enabled: true
+logging:
+  level:
+    com:
+      atguigu:
+        cloud:
+          apis:
+            PayFeignApi: debug
+
+####resilience4j bulkhead 的例子
+#resilience4j:
+#  bulkhead:
+#    configs:
+#      default:
+#        maxConcurrentCalls: 1 # 隔离允许并发线程执行的最大数量
+#        maxWaitDuration: 1s # 当达到并发调用数量时，新的线程的阻塞时间，我只愿意等待1秒，过时不候进舱壁兜底fallback
+#    instances:
+#      cloud-payment-service:
+#        baseConfig: default
+#  timelimiter:
+#    configs:
+#      default:
+#        timeout-duration: 20s
+
+####resilience4j ratelimiter 限流的例子
+resilience4j:
+  ratelimiter:
+    configs:
+      default:
+        limitForPeriod: 2 #在一次刷新周期内，允许执行的最大请求数
+        limitRefreshPeriod: 1s # 限流器每隔limitRefreshPeriod刷新一次，将允许处理的最大请求数量重置为limitForPeriod
+        timeout-duration: 1 # 线程等待权限的默认等待时间
+    instances:
+      cloud-payment-service:
+        baseConfig: default
+

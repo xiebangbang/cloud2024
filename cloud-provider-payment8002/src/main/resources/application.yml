@@ -1,5 +1,5 @@
 server:
-  port: 8001
+  port: 8002
 
 # ==========applicationName + druid-mysql8 driver===================
 spring:
@@ -20,4 +20,3 @@ mybatis:
   type-aliases-package: com.atguigu.cloud.entities
   configuration:
     map-underscore-to-camel-case: true
-

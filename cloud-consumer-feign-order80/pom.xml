@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>cloud-consumer-order80</artifactId>
+    <artifactId>cloud-consumer-feign-order80</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -18,16 +18,49 @@
     </properties>
 
     <dependencies>
-        <!--SpringCloud consul discovery -->
+        <!--resilience4j-ratelimiter-->
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-ratelimiter</artifactId>
+        </dependency>
+        <!--resilience4j-circuitbreaker-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+        <!--resilience4j-bulkhead-->
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-bulkhead</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+        <!-- 由于断路保护等需要AOP实现，所以必须导入AOP包 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <!-- httpclient5-->
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>5.3</version>
+        </dependency>
+        <!-- feign-hc5-->
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-hc5</artifactId>
+            <version>13.1</version>
+        </dependency>
+        <!--openfeign-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <!--SpringCloud consul discovery-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-consul-discovery</artifactId>
-        </dependency>
-
-        <!--loadbalancer-->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         </dependency>
         <!-- 引入自己定义的api通用包 -->
         <dependency>
@@ -75,5 +108,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

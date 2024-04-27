@@ -5,6 +5,9 @@ import com.atguigu.cloud.resp.ResultData;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,7 +16,9 @@ import java.util.List;
 @RestController
 public class OrderController {
 
-    public static final String PaymentSrv_URL = "http://localhost:8001";
+    //public static final String PaymentSrv_URL = "http://localhost:8001";//先写死，硬编码
+
+    public static final String PaymentSrv_URL = "http://cloud-payment-service";//服务注册中心上的微服务名称
 
     @Resource
     private RestTemplate restTemplate;
@@ -52,4 +57,25 @@ public class OrderController {
         return restTemplate.getForObject(PaymentSrv_URL+"/pay/getall",ResultData.class);
     }
 
+    @GetMapping("/consumer/pay/get/info")
+    private String getInfoByConsul(){
+      return restTemplate.getForObject(PaymentSrv_URL+"/pay/get/info",String.class);
+    }
+
+    @Autowired
+    private DiscoveryClient discoveryClient;
+
+    @GetMapping("/consumer/discovery")
+    private String discovery(){
+        List<String> services = discoveryClient.getServices();
+        for (String service : services) {
+            System.out.println(service);
+        }
+
+        List<ServiceInstance> instances = discoveryClient.getInstances("cloud-payment-service");
+        for (ServiceInstance instance : instances) {
+            System.out.println(instance.getServiceId()+";"+instance.getHost()+";"+instance.getPort()+";"+instance.getUri());
+        }
+        return instances.get(0).getServiceId()+";"+instances.get(0).getHost()+";"+instances.get(0).getPort();
+    }
 }
